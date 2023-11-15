@@ -43,7 +43,11 @@ add_my_fruit = streamlit.text_input('What fruit would you like to add?')
 
 my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
 my_cur = my_cnx.cursor()
-my_cur.execute("INSERT INTO fruit_load_list(FRUIT_NAME) values (?)",(add_my_fruit))
+try:
+    my_cur.execute("INSERT INTO fruit_load_list(FRUIT_NAME) VALUES (?)", (add_my_fruit,))
+except Exception as e:
+    print("Error executing SQL query:", e)
+#my_cur.execute("INSERT INTO fruit_load_list(FRUIT_NAME) values (?)",(add_my_fruit))
 my_cur.execute("SELECT * from fruit_load_list")
 my_data_rows = my_cur.fetchall()
 streamlit.dataframe(my_data_rows)
