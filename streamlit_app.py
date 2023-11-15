@@ -43,8 +43,14 @@ add_my_fruit = streamlit.text_input('What fruit would you like to add?','Kiwi')
 
 my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
 my_cur = my_cnx.cursor()
-my_cur.execute("INSERT INTO fruit_load_list(FRUIT_NAME) values ('add_my_fruit')"
-my_cnx.commit()
+#my_cur.execute("INSERT INTO fruit_load_list(FRUIT_NAME) values ('add_my_fruit')"
+# Use a try-except block to handle potential exceptions
+try:
+    with my_cnx:
+        my_cur.execute(insert_query, (new_fruit, new_quantity, new_price))
+except Exception as e:
+    # Handle the exception (print the error message for demonstration purposes)
+    print(f"Error: {e}")
 my_cur.execute("SELECT * from fruit_load_list")
 my_data_rows = my_cur.fetchall()
 streamlit.dataframe(my_data_rows)
